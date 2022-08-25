@@ -137,7 +137,7 @@ if ($delete && confirm_sesskey()) {              // Delete a selected user, afte
         require_capability('auth/magic:usersuspend', $sitecontext);
     }
     if ($user = $DB->get_record('user', array('id' => $suspend, 'mnethostid' => $CFG->mnet_localhost_id, 'deleted' => 0))) {
-        if (!is_siteadmin($user) and $USER->id != $user->id and $user->suspended != 1) {
+        if (!is_siteadmin($user) && $USER->id != $user->id && $user->suspended != 1) {
             $user->suspended = 1;
             // Force logout.
             \core\session\manager::kill_user_sessions($user->id);
@@ -294,7 +294,7 @@ if (!$users) {
         $buttons = array();
         // Delete button.
         if (has_capability('auth/magic:userdelete', $sitecontext) || has_capability('auth/magic:childuserdelete', $usercontext)) {
-            if (!is_mnet_remote_user($user) or $user->id != $USER->id or !is_siteadmin($user)) {
+            if (!is_mnet_remote_user($user) || $user->id != $USER->id || !is_siteadmin($user)) {
                 // No deleting of self, mnet accounts or admins allowed.
                 $url = new moodle_url($returnurl, array('delete' => $user->id, 'sesskey' => sesskey()));
                 $buttons[] = html_writer::link($url, $OUTPUT->pix_icon('t/delete', $strdelete));
@@ -307,7 +307,7 @@ if (!$users) {
                 $url = new moodle_url($returnurl, array('unsuspend' => $user->id, 'sesskey' => sesskey()));
                 $buttons[] = html_writer::link($url, $OUTPUT->pix_icon('t/show', $strunsuspend));
             } else {
-                if (!$user->id == $USER->id or !is_siteadmin($user)) {
+                if (!$user->id == $USER->id || !is_siteadmin($user)) {
                     $url = new moodle_url($returnurl, array('suspend' => $user->id, 'sesskey' => sesskey()));
                     $buttons[] = html_writer::link($url, $OUTPUT->pix_icon('t/hide', $strsuspend));
                 }
@@ -322,7 +322,7 @@ if (!$users) {
         // Edit button.
         if (has_capability('auth/magic:userupdate', $sitecontext)) {
             // Prevent editing of admins by non-admins.
-            if (is_siteadmin($USER) or !is_siteadmin($user)) {
+            if (is_siteadmin($USER) || !is_siteadmin($user)) {
                 $url = new moodle_url('/user/editadvanced.php', array('id' => $user->id, 'course' => $site->id));
                 $buttons[] = html_writer::link($url, $OUTPUT->pix_icon('t/edit', $stredit));
             }

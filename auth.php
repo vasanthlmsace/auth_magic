@@ -186,7 +186,7 @@ class auth_plugin_magic extends auth_plugin_base {
             $message = get_string('invailduser', 'auth_magic');
         } else if ($user->auth != 'magic' && !$accessauthtoall) {
             $message = get_string('invalidrequest', 'error');
-        } else if (!empty($key->validuntil) and $key->validuntil < time()) {
+        } else if (!empty($key->validuntil) && $key->validuntil < time()) {
             $message = get_string('expiredkey', 'error');
         }
         if (!empty($message)) {
@@ -315,7 +315,7 @@ class auth_plugin_magic extends auth_plugin_base {
         $accessauthtoall = get_config('auth_magic', 'authmethod');
         if ($instance = $DB->get_record('auth_magic_loginlinks', array('loginuserkey' => $key))) {
             // Key as login.
-            if (!empty($instance->loginexpiry) and $instance->loginexpiry < time()) {
+            if (!empty($instance->loginexpiry) && $instance->loginexpiry < time()) {
                 // Resend login and indicate to the click the expiry key.
                 $relateduser = \core_user::get_user($instance->userid);
                 if (!$relateduser->suspended && !$relateduser->deleted) {
@@ -329,7 +329,7 @@ class auth_plugin_magic extends auth_plugin_base {
             }
         } else if ($instance = $DB->get_record('auth_magic_loginlinks', array('invitationuserkey' => $key))) {
             // Key as invitation.
-            if (!empty($instance->invitationexpiry) and $instance->invitationexpiry < time()) {
+            if (!empty($instance->invitationexpiry) && $instance->invitationexpiry < time()) {
                 // Resend login.
                 $relateduser = \core_user::get_user($instance->userid);
                 if (!$relateduser->suspended && !$relateduser->deleted) {

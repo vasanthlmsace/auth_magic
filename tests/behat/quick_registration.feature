@@ -138,7 +138,3 @@ Feature: Quic registrer method to magic authentication.
     And I click on "List of magic keys" "link"
     Then I should see "user_01 user_01"
     And I should see "1 Users"
-
-
-
-
