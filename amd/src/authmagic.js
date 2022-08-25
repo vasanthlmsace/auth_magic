@@ -36,7 +36,7 @@
                 if (copyBoardButton) {
                     copyBoardButton.addEventListener("click", self.copyTextCliboard.bind(self));
                 }
-            }, 2000);
+            }, 1800);
         }
         if (params.cancopylink !== undefined) {
             self.copyuserLoginlink(params.cancopylink);
