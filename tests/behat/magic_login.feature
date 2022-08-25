@@ -3,15 +3,15 @@ Feature: Login to user for magic authentication.
   In order login user actions properly for magic auth.
 
   Background:
-  Given I log in as "admin"
-  And I navigate to "Plugins > Authentication > Manage authentication" in site administration
-  And I click on "Enable" "link" in the "Magic authentication" "table_row"
-  Then the following "users" exist:
-    | username | firstname | lastname | email             | auth |
-    | user_01  | user_01   | user_01  | user_01@gmail.com | magic|
-    | user_02  | user_02   | user_02  | user_02@gmail.com | magic|
-    | user_03  | user_03   | user_03  | user_03@gmail.com | manual|
-  Then I log out
+    Given I log in as "admin"
+    And I navigate to "Plugins > Authentication > Manage authentication" in site administration
+    And I click on "Enable" "link" in the "Magic authentication" "table_row"
+    Then the following "users" exist:
+      | username | firstname | lastname | email             | auth |
+      | user_01  | user_01   | user_01  | user_01@gmail.com | magic|
+      | user_02  | user_02   | user_02  | user_02@gmail.com | magic|
+      | user_03  | user_03   | user_03  | user_03@gmail.com | manual|
+    Then I log out
 
   @javascript
   Scenario: Check the magic user login checks.
@@ -27,6 +27,3 @@ Feature: Login to user for magic authentication.
     And I should see "Doesn't exist user email"
     And I click on "Get a magic link via email" "link"
     And I should see "Invalid email address"
-
-
-

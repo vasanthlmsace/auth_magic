@@ -2,18 +2,18 @@
 Feature: List of user magic links to magic authentication.
   In order view the list of user actions properly.
   Background:
-  Given I log in as "admin"
-  And I navigate to "Plugins > Authentication > Manage authentication" in site administration
-  And I click on "Enable" "link" in the "Magic authentication" "table_row"
-  Then the following "users" exist:
-    | username | firstname | lastname | email             | auth |
-    | user_01  | user_01   | user_01  | user_01@gmail.com | magic|
-    | user_02  | user_02   | user_02  | user_02@gmail.com | magic|
-    | user_03  | user_03   | user_03  | user_03@gmail.com | magic|
-    | user_04  | user_04   | user_04  | user_04@gmail.com | magic|
-    | user_05  | user_05   | user_05  | user_05@gmail.com | magic|
-    | user_06  | user_06   | user_06  | user_06gmail.com  | magic|
-    | user_07  | user_07   | user_07  | user_07@gmail.com | magic|
+    Given I log in as "admin"
+    And I navigate to "Plugins > Authentication > Manage authentication" in site administration
+    And I click on "Enable" "link" in the "Magic authentication" "table_row"
+    Then the following "users" exist:
+      | username | firstname | lastname | email             | auth |
+      | user_01  | user_01   | user_01  | user_01@gmail.com | magic|
+      | user_02  | user_02   | user_02  | user_02@gmail.com | magic|
+      | user_03  | user_03   | user_03  | user_03@gmail.com | magic|
+      | user_04  | user_04   | user_04  | user_04@gmail.com | magic|
+      | user_05  | user_05   | user_05  | user_05@gmail.com | magic|
+      | user_06  | user_06   | user_06  | user_06gmail.com  | magic|
+      | user_07  | user_07   | user_07  | user_07@gmail.com | magic|
 
   @javascript
   Scenario: Check the magic user actions.
@@ -25,7 +25,7 @@ Feature: List of user magic links to magic authentication.
     And I should see "user_01@gmail.com"
     When I navigate to "Users > Accounts > List of magic keys" in site administration
     And I set the following fields to these values:
-    | email | user_01@gmail.com |
+      | email | user_01@gmail.com |
     And I press "Add filter"
     And I should see "user_01@gmail.com"
     And I click on "Delete" "link"
@@ -48,5 +48,3 @@ Feature: List of user magic links to magic authentication.
     When I navigate to "Users > Accounts > List of magic keys" in site administration
     And I click on ".icon[title=\"Send the magic link to the user\"]" "css_element" in the "user_01@gmail.com" "table_row"
     Then I should see "Sent the invitation link to the mail"
-
-
