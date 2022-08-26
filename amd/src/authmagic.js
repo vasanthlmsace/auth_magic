@@ -31,12 +31,6 @@
         var self = this;
         if (params.enrolstatus !== undefined) {
             self.displayAuthInfoBox(params);
-            setTimeout(function() {
-                var copyBoardButton = document.querySelectorAll(".auth-magic-block .copy-link-block #copy-cliboard")[0];
-                if (copyBoardButton) {
-                    copyBoardButton.addEventListener("click", self.copyTextCliboard.bind(self));
-                }
-            }, 1800);
         }
         if (params.cancopylink !== undefined) {
             self.copyuserLoginlink(params.cancopylink);
@@ -204,8 +198,13 @@
             body: self.getAuthMagicBody(params),
             large: true
         }).then(function(modal) {
-
             modal.show();
+            modal.getRoot().on(ModalEvents.bodyRendered, function() {
+                var copyBoardButton = document.querySelectorAll(".auth-magic-block .copy-link-block #copy-cliboard")[0];
+                if (copyBoardButton) {
+                    copyBoardButton.addEventListener("click", self.copyTextCliboard.bind(self));
+                }
+            });
             modal.getRoot().on(ModalEvents.hidden, function() {
                 modal.destroy();
                 window.open(params.returnurl, '_self');
