@@ -38,11 +38,12 @@
         if (params.loginhook) {
             self.magicLoginHook(params);
         }
+
         if (params.hascourseregister) {
             self.courseQuickRegistration(params);
         }
-        return true;
     };
+
 
     AuthMagic.prototype.courseQuickRegistration = function(params) {
         var uniqueid = "user-index-participants-" + params.courseid;
