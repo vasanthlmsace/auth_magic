@@ -26,6 +26,10 @@ require(__DIR__.'/../../config.php');
 require_once($CFG->dirroot. "/auth/magic/classes/form/quickregistration_form.php");
 require_once("$CFG->libdir/adminlib.php");
 
+if (!is_enabled_auth('magic')) {
+    throw new moodle_exception(get_string('pluginisdisabled', 'auth_magic'));
+}
+
 $courseid = optional_param('courseid', 0, PARAM_INT);
 $userid = optional_param('userid', 0, PARAM_INT);
 $return = optional_param('return', 0, PARAM_INT);

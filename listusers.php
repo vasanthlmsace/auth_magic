@@ -27,6 +27,10 @@ require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot.'/user/filters/lib.php');
 require_once($CFG->dirroot.'/auth/magic/lib.php');
 
+if (!is_enabled_auth('magic')) {
+    throw new moodle_exception(get_string('pluginisdisabled', 'auth_magic'));
+}
+
 $userid = optional_param('userid', 0, PARAM_INT);
 $delete = optional_param('delete', 0, PARAM_INT);
 $suspend = optional_param('suspend', 0, PARAM_INT);
@@ -184,7 +188,7 @@ foreach ($columns as $column) {
     if ($column == 'courses') {
         continue;
     }
-    $string[$column] = get_user_field_name($column);
+    $string[$column] = get_string($column);
     if ($sort != $column) {
         $columnicon = "";
         if ($column == "lastaccess") {
@@ -218,7 +222,15 @@ $a->lastname = 'lastname';
 $fullnamesetting = get_string('fullnamedisplay', null, $a);
 
 // Get all user name fields as an array.
-$allusernamefields = get_all_user_name_fields(false, null, null, null, true);
+
+$allusernamefields = [];
+if (method_exists('\core_user\fields', 'get_name_fields')) {
+    foreach (\core_user\fields::get_name_fields() as $field) {
+        $allusernamefields[$field] = $field;
+    }
+} else {
+    $allusernamefields = get_all_user_name_fields(false, null, null, null, true);
+}
 // Order in string will ensure that the name columns are in the correct order.
 $usernames = order_in_string($allusernamefields, $fullnamesetting);
 $fullnamedisplay = array();

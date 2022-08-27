@@ -46,7 +46,7 @@ class user_list_viewed_observer {
             $courseid = $data['courseid'];
             $coursecontext = \context_course::instance($courseid);
             $params['hascourseregister'] = has_capability("auth/magic:cancoursequickregistration", $coursecontext)
-                && auth_magic_is_course_manual_enrollment($courseid);
+                && auth_magic_is_course_manual_enrollment($courseid) && is_enabled_auth('magic');
             $url = new \moodle_url('/auth/magic/registration.php');
             $params['url'] = $url->out(false);
             $params['courseid'] = $courseid;

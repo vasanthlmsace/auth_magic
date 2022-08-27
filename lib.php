@@ -30,16 +30,17 @@ use core_user\output\myprofile\tree;
  * @return array courses.
  */
 function auth_magic_get_courses_for_registration() {
-    global $PAGE;
+    global $PAGE, $DB;
     $courses = [];
-    $coursesinfo = core_course_category::get(0)->get_courses(array('recursive' => true));
+    $coursesinfo = $DB->get_records('course', null, 'id DESC');
     if (!empty($coursesinfo)) {
         foreach ($coursesinfo as $info) {
             $instances = enrol_get_instances($info->id, true);
             // Make sure manual enrolments instance exists.
             foreach ($instances as $instance) {
                 if ($instance->enrol == 'manual') {
-                    $courses[$info->id] = $info->get_formatted_fullname();
+                    $courselist = new core_course_list_element($info);
+                    $courses[$info->id] = $courselist->get_formatted_fullname();
                 }
             }
         }
@@ -98,8 +99,7 @@ function auth_magic_enroll_course_user($courseid, $user, $enrolmentduration = 0)
     $instance = $DB->get_record('enrol', array('courseid' => $courseid, 'enrol' => 'manual'));
     $enrolmanual = enrol_get_plugin('manual');
     if ($enrolmanual &&  !empty($instance)) {
-        if ($enrolmanual->allow_enrol($instance) &&
-            has_capability('enrol/'.$enrolmanual->get_name().':enrol', $context)) {
+        if ($enrolmanual->allow_enrol($instance)) {
             $timeend = 0;
             if ($enrolmentduration) {
                 $timeend = time() + $enrolmentduration;

@@ -38,12 +38,10 @@
         if (params.loginhook) {
             self.magicLoginHook(params);
         }
-
         if (params.hascourseregister) {
             self.courseQuickRegistration(params);
         }
     };
-
 
     AuthMagic.prototype.courseQuickRegistration = function(params) {
         var uniqueid = "user-index-participants-" + params.courseid;
@@ -80,60 +78,79 @@
     AuthMagic.prototype.magicLoginHook = function(params) {
         var authSelector = "#page-login-index .potentialidplist a[title=\"" + params.strbutton + "\"]";
         var getMagicLink = document.querySelectorAll(authSelector)[0];
-            if (getMagicLink) {
-                getMagicLink.classList.remove("btn-secondary");
-                getMagicLink.classList.add("btn-primary");
-                var userNameBlock = document.querySelectorAll("#page-login-index form#login .form-group")[0];
-                if (userNameBlock) {
-                    userNameBlock.appendChild(getMagicLink);
-                    // Create a span.
-                    var span = document.createElement("span");
-                    span.setAttribute("class", "magic-password-instruction");
-                    var passInfo = String.get_string('passinfo', 'auth_magic');
-                    $.when(passInfo).done(function(localizedEditString) {
-                        span.innerHTML = localizedEditString;
-                   });
-                    userNameBlock.appendChild(span);
-                }
-                var potentialiDp = $("#page-login-index .potentialidplist").prev();
-                var potentialiDpList = document.querySelectorAll("#page-login-index .potentialidplist .potentialidp");
-                if (potentialiDpList.length <= 1) {
-                    $(potentialiDp).hide();
-                }
-                getMagicLink.addEventListener("click", function(e) {
-                    e.preventDefault();
-                    var returnurl = e.currentTarget.getAttribute("href");
-                    var userEmail = "";
-                    var mailSelector = document.querySelectorAll("form#login #username")[0];
-                    if (mailSelector) {
-                        userEmail = mailSelector.value;
+        var potentialiDp = $("#page-login-index .potentialidplist").prev();
+        var potentialiDpList = document.querySelectorAll("#page-login-index .potentialidplist .potentialidp");
+        if (getMagicLink === undefined) {
+            var authSelector = "#page-login-index .login-identityproviders a";
+            var getMagicLinks = document.querySelectorAll(authSelector);
+            if (getMagicLinks.length) {
+                getMagicLinks.forEach(function(item){
+                    var inner = item.innerHTML.trim();
+                    if (inner == params.strbutton) {
+                        getMagicLink = item;
+                        potentialiDpList = document.querySelectorAll("#page-login-index .login-identityproviders a");
+                        potentialiDp = document.querySelectorAll("#page-login-index .login-identityproviders h2")[0];
                     }
-                    // Create a form.
-                    var form = document.createElement("form");
-                    form.setAttribute("method", "post");
-                    form.setAttribute("action", returnurl);
-                    form.setAttribute("id", "magic-login-form");
-
-                     // Create an input element for Full Name
-                    var magicLogin = document.createElement("input");
-                    magicLogin.setAttribute("type", "hidden");
-                    magicLogin.setAttribute("name", "magiclogin");
-                    magicLogin.setAttribute("value", 1);
-
-                    var email = document.createElement("input");
-                    email.setAttribute("type", "hidden");
-                    email.setAttribute("name", "usermail");
-                    email.setAttribute("value", userEmail);
-
-                    form.appendChild(magicLogin);
-                    form.appendChild(email);
-
-                    getMagicLink.parentNode.appendChild(form);
-
-                    var magicForm = document.querySelectorAll("form#magic-login-form")[0];
-                    magicForm.submit();
-                });
+                })
             }
+        }
+        if (getMagicLink) {
+            getMagicLink.classList.remove("btn-secondary");
+            getMagicLink.classList.add("btn-primary");
+            var userNameBlock = document.querySelectorAll("#page-login-index form#login .form-group")[0];
+            if (userNameBlock) {
+                userNameBlock.appendChild(getMagicLink);
+                // Create a span.
+                var span = document.createElement("span");
+                span.setAttribute("class", "magic-password-instruction");
+                var passInfo = String.get_string('passinfo', 'auth_magic');
+                $.when(passInfo).done(function(localizedEditString) {
+                    span.innerHTML = localizedEditString;
+                });
+                userNameBlock.appendChild(span);
+            }
+            if (potentialiDpList.length <= 1) {
+                $(potentialiDp).hide();
+                    var identityProvider = document.querySelectorAll("#page-login-index .login-identityproviders")[0];
+                    if (identityProvider) {
+                        $(identityProvider).prev().hide();
+                        $(identityProvider).next().hide();
+                    }
+            }
+            getMagicLink.addEventListener("click", function(e) {
+                e.preventDefault();
+                var returnurl = e.currentTarget.getAttribute("href");
+                var userEmail = "";
+                var mailSelector = document.querySelectorAll("form#login #username")[0];
+                if (mailSelector) {
+                    userEmail = mailSelector.value;
+                }
+                // Create a form.
+                var form = document.createElement("form");
+                form.setAttribute("method", "post");
+                form.setAttribute("action", returnurl);
+                form.setAttribute("id", "magic-login-form");
+
+                    // Create an input element for Full Name
+                var magicLogin = document.createElement("input");
+                magicLogin.setAttribute("type", "hidden");
+                magicLogin.setAttribute("name", "magiclogin");
+                magicLogin.setAttribute("value", 1);
+
+                var email = document.createElement("input");
+                email.setAttribute("type", "hidden");
+                email.setAttribute("name", "usermail");
+                email.setAttribute("value", userEmail);
+
+                form.appendChild(magicLogin);
+                form.appendChild(email);
+
+                getMagicLink.parentNode.appendChild(form);
+
+                var magicForm = document.querySelectorAll("form#magic-login-form")[0];
+                magicForm.submit();
+            });
+        }
     };
 
     AuthMagic.prototype.copyuserLoginlink = function(cancopylink) {

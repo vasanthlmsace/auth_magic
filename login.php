@@ -98,6 +98,7 @@ if (isloggedin()) {
     if ($USER->id != $key->userid) {
         // Logout the current user if it's different to one that associated to the valid key.
         require_logout();
+        redirect(new moodle_url($PAGE->url, array('key' => $key->value)));
     } else {
         // Don't process further if the user is already logged in.
         redirect($redirecturl);
@@ -106,8 +107,5 @@ if (isloggedin()) {
 
 $user = get_complete_user_data('id', $key->userid);
 complete_user_login($user);
-
-// Identify this session as using user key auth method.
-$SESSION->userkey = true;
 
 redirect($redirecturl);
