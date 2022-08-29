@@ -51,6 +51,7 @@ class auth_magic_test extends \advanced_testcase {
 
     /**
      * Test that magic users can't login.
+     * @covers ::users_can_not_login
      */
     public function test_users_can_not_login() {
         $user = new stdClass();
@@ -63,6 +64,7 @@ class auth_magic_test extends \advanced_testcase {
 
     /**
      * Test create_user_key.
+     * @covers ::create_user_key
      */
     public function test_create_user_key() {
         global $DB;
@@ -73,6 +75,7 @@ class auth_magic_test extends \advanced_testcase {
 
     /**
      * Test validate_key.
+     * @covers ::validate_key
      */
     public function test_validate_key() {
         $suspenduser = $this->generator->create_user(['auth' => 'magic', 'suspended' => 1]);
@@ -90,6 +93,7 @@ class auth_magic_test extends \advanced_testcase {
 
     /**
      * Test user_delete_keys.
+     * @covers ::user_delete_keys
      */
     public function test_user_delete_keys() {
         global $DB;
@@ -102,6 +106,7 @@ class auth_magic_test extends \advanced_testcase {
 
     /**
      * Test create_magic_instance.
+     * @covers ::create_magic_instance
      */
     public function test_create_magic_instance() {
         global $DB;
@@ -121,6 +126,7 @@ class auth_magic_test extends \advanced_testcase {
 
     /**
      * Test auth_magic_get_courses_for_registration.
+     * @covers ::auth_magic_get_courses_for_registration
      */
     public function test_auth_magic_get_courses_for_registration() {
         global $DB;
@@ -148,6 +154,7 @@ class auth_magic_test extends \advanced_testcase {
 
     /**
      * Test auth_magic_is_course_manual_enrollment.
+     * @covers ::auth_magic_is_course_manual_enrollment
      */
     public function test_auth_magic_is_course_manual_enrollment() {
         global $DB;
@@ -172,6 +179,7 @@ class auth_magic_test extends \advanced_testcase {
 
     /**
      * Test auth_magic_user_courses.
+     * @covers ::auth_magic_user_courses
      */
     public function test_auth_magic_user_courses() {
         global $DB;
@@ -204,6 +212,7 @@ class auth_magic_test extends \advanced_testcase {
 
     /**
      * Test auth_magic_enroll_course_user.
+     * @covers ::auth_magic_enroll_course_user
      */
     public function test_auth_magic_enroll_course_user() {
         global $DB;

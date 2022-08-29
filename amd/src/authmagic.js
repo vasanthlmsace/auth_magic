@@ -81,17 +81,17 @@
         var potentialiDp = $("#page-login-index .potentialidplist").prev();
         var potentialiDpList = document.querySelectorAll("#page-login-index .potentialidplist .potentialidp");
         if (getMagicLink === undefined) {
-            var authSelector = "#page-login-index .login-identityproviders a";
+            authSelector = "#page-login-index .login-identityproviders a";
             var getMagicLinks = document.querySelectorAll(authSelector);
             if (getMagicLinks.length) {
-                getMagicLinks.forEach(function(item){
+                getMagicLinks.forEach(function(item) {
                     var inner = item.innerHTML.trim();
                     if (inner == params.strbutton) {
                         getMagicLink = item;
                         potentialiDpList = document.querySelectorAll("#page-login-index .login-identityproviders a");
                         potentialiDp = document.querySelectorAll("#page-login-index .login-identityproviders h2")[0];
                     }
-                })
+                });
             }
         }
         if (getMagicLink) {

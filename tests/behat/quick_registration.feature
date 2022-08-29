@@ -88,10 +88,10 @@ Feature: Quic registrer method to magic authentication.
     And I should see "Course 1" in the "user_01 user_01" "table_row"
     And I should see "Course 2" in the "user_02 user_02" "table_row"
     And I am on "Course 1" course homepage
-    And I navigate to "Users > Enrolled users" in current page administration
+    And I navigate course enroll page "Course 1"
     Then I should see "user_01 user_01"
     And I am on "Course 2" course homepage
-    And I navigate to "Users > Enrolled users" in current page administration
+    And I navigate course enroll page "Course 2"
     Then I should see "user_02 user_02"
 
   @javascript
