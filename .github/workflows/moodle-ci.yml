@@ -34,21 +34,6 @@ jobs:
           - php: '7.3'
             moodle-branch: 'MOODLE_39_STABLE'
             database: 'mariadb'
-          - php: '7.4'
-            moodle-branch: 'MOODLE_310_STABLE'
-            database: 'pgsql'
-          - php: '7.3'
-            moodle-branch: 'MOODLE_310_STABLE'
-            database: 'mariadb'
-          - php: '8.0'
-            moodle-branch: 'MOODLE_311_STABLE'
-            database: 'pgsql'
-          - php: '7.4'
-            moodle-branch: 'MOODLE_311_STABLE'
-            database: 'pgsql'
-          - php: '7.4'
-            moodle-branch: 'MOODLE_311_STABLE'
-            database: 'mariadb'
           - php: '8.0'
             moodle-branch: 'master'
             database: 'pgsql'
@@ -85,7 +70,7 @@ jobs:
         env:
           DB: ${{ matrix.database }}
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
-          IGNORE_NAMES: 'login.php'
+          IGNORE_NAMES: 'login.php,authmagic.min.js,authmagic.min.js.map'
 
       - name: PHP Lint
         if: ${{ always() }}
