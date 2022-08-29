@@ -41,7 +41,6 @@
         if (params.hascourseregister) {
             self.courseQuickRegistration(params);
         }
-        return true;
     };
 
     AuthMagic.prototype.courseQuickRegistration = function(params) {
