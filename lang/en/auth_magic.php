@@ -21,8 +21,6 @@
  * @copyright  2022 bdecent gmbh <https://bdecent.de>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-$string['auth_magicdescription'] = 'Auxiliary plugin that prevents user to login into system and also discards any mail sent to the user. Can be used to <em>suspend</em> user accounts.';
 $string['pluginname'] = 'Magic authentication';
 $string['configtitle'] = "Magic authentication";
 $string['privacy:metadata'] = 'The Magic authentication plugin does not store any personal data.';
@@ -59,11 +57,11 @@ $string['strenrolinto'] = "and enrolled into";
 $string['magiclink'] = "Magic link";
 $string['copyboard'] = "Copy link to cliboard";
 $string['strconfirm'] = "Confirmation";
-$string['userkeyslist'] = "List of magic keys";
+$string['userkeyslist'] = "My user accounts";
 $string['copyloginlink'] = "Copy magic login link for the user";
 $string['copyinvitationlink'] = "Copy magic invitation link for the user";
 $string['sendlink'] = "Send the magic link to the user";
-$string['listofmagiclink'] = "List of magic keys";
+$string['listofmagiclink'] = "Magic user accounts";
 $string['more'] = '{$a} more';
 $string['loginsubject'] = '{$a}: Magic authentication via login';
 $string['loginlinksubject'] = "Magic authentication login link";
@@ -72,23 +70,20 @@ $string['pluginisdisabled'] = 'The magic authentication plugin is disabled.';
 $string['sentinvitationlink'] = "Sent the invitation link to the mail";
 $string['notsentinvitationlink'] = "Doesn't sent the invitation link to the mail";
 $string['emailnotexists'] = "Doesn't exist user email";
-$string['sentlinktouser'] = "if the email address belongs to an account that supports login via link, a link has been sent via email.
-";
+$string['sentlinktouser'] = "If you supplied a correct email address, an email containing a magic login link should have been sent to you.";
 $string['preventmagicauthsubject'] = "Magic authentication support information";
-$string['invitationexpiryloginlink'] = "The invitation link has expired. if the email address belongs to an account that supports login via link, a link has been sent via email";
-$string['loginexpiryloginlink'] = "The login link has expired. if the email address belongs to an account that supports login via link, a link has been sent via email";
+$string['invitationexpiryloginlink'] = "The invitation link has expired. If the email address belongs to an account that supports login via link, a link has been sent via email";
+$string['loginexpiryloginlink'] = "The magic login link has expired. A new magic login link has been sent to your email address.";
 
 $string['invitationmessage'] = 'Hi {$a->fullname},
 
-A new account has been requested at \'{$a->sitename}\'
-using your email address.
-
-To login your new account, please click this invitation link to login directly instead username and password :
+to access your account on \'{$a->sitename}\', please use the following magic link:
 
 <a href=\'{$a->link}\'> {$a->link} </a> <br>
 
 If you need help, please contact the site administrator,
 {$a->admin}';
+
 
 
 $string['loginlinknmessage'] = 'Hi {$a->fullname},
@@ -97,6 +92,17 @@ A new account has been requested at \'{$a->sitename}\'
 using your email address.
 
 To login your new account, please go to this web address login directly instead username and password :
+
+<a href=\'{$a->link}\'> {$a->link} </a> <br>
+
+If you need help, please contact the site administrator,
+{$a->admin}';
+
+$string['expiredloginlinkmsg'] = 'Hi {$a->fullname},
+
+you have tried to access \'{$a->sitename}\' with an expired magic login link.
+
+A new magic link was automatically created for you:
 
 <a href=\'{$a->link}\'> {$a->link} </a> <br>
 
@@ -121,3 +127,4 @@ $string['doesnotaccesskey'] = "Doesn't have access the key in your authenticatio
 $string['manualinfo'] = "Manual enrolments are not available in this course.";
 $string['passinfo'] = "- or type in your password -";
 $string['invailduser'] = "Invaild user";
+$string['magicloginlink'] = '{$a}: Magic login link';

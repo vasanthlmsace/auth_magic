@@ -50,6 +50,6 @@
 .auth-magic .modal .modal-dialog .modal-content .modal-footer button {
     display: none;
 }
-.auth-magic.path-login .card .card-block .card-body form .form-group a.btn-block {
+.auth-magic.path-login form .form-group a.btn-block {
     margin: 20px 0;
 }

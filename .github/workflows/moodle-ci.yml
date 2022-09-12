@@ -34,6 +34,15 @@ jobs:
           - php: '7.3'
             moodle-branch: 'MOODLE_39_STABLE'
             database: 'mariadb'
+          - php: '8.0'
+            moodle-branch: 'master'
+            database: 'pgsql'
+          - php: '7.4'
+            moodle-branch: 'master'
+            database: 'mariadb'
+          - php: '7.4'
+            moodle-branch: 'master'
+            database: 'pgsql'
 
     steps:
       - name: Check out repository code
@@ -61,7 +70,7 @@ jobs:
         env:
           DB: ${{ matrix.database }}
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
-          IGNORE_NAMES: 'login.php'
+          IGNORE_NAMES: 'login.php,authmagic.min.js,authmagic.min.js.map'
 
       - name: PHP Lint
         if: ${{ always() }}

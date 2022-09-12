@@ -239,9 +239,10 @@ function auth_magic_get_parent_child_users($parentid, $checkparent = false) {
     $isparent = false;
     $users = [];
     if ($usercontexts = $DB->get_records_sql("SELECT c.instanceid
-                                                    FROM {role_assignments} ra, {context} c, {user} u
+                                                    FROM {role_assignments} ra, {context} c, {user} u, {auth_magic_loginlinks} mc
                                                    WHERE ra.userid = ?
                                                          AND ra.contextid = c.id
+                                                         AND u.id = mc.userid
                                                          AND c.instanceid = u.id
                                                          AND c.contextlevel = ".CONTEXT_USER, array($parentid))) {
         $users = array_keys($usercontexts);
@@ -310,7 +311,7 @@ function auth_magic_sent_invitation_user($userid) {
     $site = get_site();
     $user = \core_user::get_user($userid);
     $invitationlink = auth_magic_get_user_invitation_link($userid);
-    $subject = get_string('loginsubject', 'auth_magic', format_string($site->fullname));
+    $subject = get_string('magicloginlink', 'auth_magic', format_string($site->fullname));
     // Lang data.
     $data = new stdClass();
     $data->sitename  = format_string($site->fullname);
@@ -327,9 +328,10 @@ function auth_magic_sent_invitation_user($userid) {
  * Sent the login link to the user.
  * @param int $userid
  * @param bool $otherauth
+ * @param bool $expired
  * @return bool message status
  */
-function auth_magic_sent_loginlink_touser($userid, $otherauth = false) {
+function auth_magic_sent_loginlink_touser($userid, $otherauth = false, $expired = false) {
     $site = get_site();
     $user = \core_user::get_user($userid);
     if ($otherauth) {
@@ -343,7 +345,11 @@ function auth_magic_sent_loginlink_touser($userid, $otherauth = false) {
     $data->admin     = generate_email_signoff();
     $data->fullname = fullname($user);
     $data->link = $loginlink;
-    $messageplain = get_string('loginlinknmessage', 'auth_magic', $data);
+    if ($expired) {
+        $messageplain = get_string('expiredloginlinkmsg', 'auth_magic', $data);
+    } else {
+        $messageplain = get_string('loginlinknmessage', 'auth_magic', $data);
+    }
     $messagehtml = text_to_html($messageplain, false, false, true);
     $user->mailformat = 1;  // Always send HTML version as well.
     return auth_magic_messagetouser($user, $subject, $messageplain, $messagehtml);

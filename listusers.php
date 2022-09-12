@@ -46,7 +46,7 @@ require_login();
 $url = new moodle_url('/auth/magic/listusers.php', array('userid' => $userid));
 $PAGE->set_url($url);
 $sitecontext = context_system::instance();
-$strlistmagickeys = get_string('userkeyslist', 'auth_magic');
+$strlistmagickeys = get_string('listofmagiclink', 'auth_magic');
 if (!$userid) {
     $sitecontext = context_system::instance();
     require_capability("auth/magic:viewloginlinks", $sitecontext);
@@ -256,11 +256,23 @@ if ($sort == "name") {
 
 $authsql = 'auth = :auth';
 $authparams = ['auth' => 'magic'];
-if ($userid) {
+if (has_capability('auth/magic:viewloginlinks', $sitecontext)) {
+    $sql = "SELECT u.id
+    FROM {auth_magic_loginlinks} ml
+    JOIN {user} u ON (ml.userid = u.id)
+    WHERE u.deleted = 0 AND u.suspended = 0";
+    $records = $DB->get_records_sql($sql, null);
+    if (!empty($records)) {
+        $otherusers = array_keys($records);
+        list($otherusersql, $otheruserparams) = $DB->get_in_or_equal($otherusers, SQL_PARAMS_NAMED);
+        $authsql = "id $otherusersql";
+        $authparams = $otheruserparams;
+    }
+} else if ($userid) {
     $childusers = auth_magic_get_parent_child_users($USER->id);
     list($usersql, $userparams) = $DB->get_in_or_equal($childusers, SQL_PARAMS_NAMED);
-    $authsql .= " AND id $usersql";
-    $authparams += $userparams;
+    $authsql = "id $usersql";
+    $authparams = $userparams;
 }
 
 list($filtersql, $params) = $ufiltering->get_sql_filter();
@@ -269,6 +281,9 @@ $params += $authparams;
 $users = get_users_listing($sort, $dir, $page * $perpage, $perpage, '', '', '',
             $extrasql, $params, $sitecontext);
 $usercount = get_users(false, '', false, null, "", '', '', '', '', '*', $authsql, $authparams);
+if ($filtersql !== '') {
+    $filtersql = $filtersql . "AND ". $authsql;
+}
 $usersearchcount = get_users(false, '', false, null, "", '', '', '', '', '*', $filtersql, $params);
 if ($filtersql !== '') {
     echo $OUTPUT->heading("$usersearchcount / $usercount ".get_string('users'));

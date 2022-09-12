@@ -312,6 +312,10 @@ class auth_plugin_magic extends auth_plugin_base {
      */
     public function check_userkey_type($key) {
         global $DB;
+        $options = array(
+            'script' => 'auth/magic',
+            'value' => $key
+        );
         $accessauthtoall = get_config('auth_magic', 'authmethod');
         if ($instance = $DB->get_record('auth_magic_loginlinks', array('loginuserkey' => $key))) {
             // Key as login.
@@ -321,7 +325,7 @@ class auth_plugin_magic extends auth_plugin_base {
                 if (!$relateduser->suspended && !$relateduser->deleted) {
                     if ($relateduser->auth == 'magic' || $accessauthtoall) {
                         $this->update_new_loginkey($relateduser, $instance);
-                        auth_magic_sent_loginlink_touser($relateduser->id);
+                        auth_magic_sent_loginlink_touser($relateduser->id, false, true);
                         redirect(new moodle_url('/login/index.php'), get_string('loginexpiryloginlink', 'auth_magic'),
                             null, \core\output\notification::NOTIFY_INFO);
                     }
@@ -334,11 +338,27 @@ class auth_plugin_magic extends auth_plugin_base {
                 $relateduser = \core_user::get_user($instance->userid);
                 if (!$relateduser->suspended && !$relateduser->deleted) {
                     if ($relateduser->auth == 'magic' || $accessauthtoall) {
-                        $this->update_new_loginkey($relateduser, $instance);
+                        // Exist login is expiry or not.
+                        if (!empty($instance->loginexpiry) && $instance->loginexpiry < time()) {
+                            $this->update_new_loginkey($relateduser, $instance);
+                        }
                         auth_magic_sent_loginlink_touser($relateduser->id);
                         redirect(new moodle_url('/login/index.php'), get_string('invitationexpiryloginlink', 'auth_magic'),
                             null, \core\output\notification::NOTIFY_INFO);
                     }
+                }
+            }
+        } else if ($keyrecord = $DB->get_record('user_private_key', $options)) {
+            $relateduser = \core_user::get_user($keyrecord->userid);
+            if (!$relateduser->suspended && !$relateduser->deleted) {
+                if ($relateduser->auth == 'magic' || $accessauthtoall) {
+                    $instance = $DB->get_record('auth_magic_loginlinks', array('userid' => $relateduser->id));
+                    if (!empty($instance->loginexpiry) && $instance->loginexpiry < time()) {
+                        $this->update_new_loginkey($relateduser, $instance);
+                    }
+                    auth_magic_sent_loginlink_touser($relateduser->id, false, true);
+                    redirect(new moodle_url('/login/index.php'), get_string('loginexpiryloginlink', 'auth_magic'),
+                            null, \core\output\notification::NOTIFY_INFO);
                 }
             }
         }
