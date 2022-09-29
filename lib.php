@@ -132,6 +132,15 @@ function auth_magic_output_fragment_display_box_content($args) {
     $templatecontext['username'] = fullname($user);
     $templatecontext['magicinvitation'] = $userkeyinfo->magicinvitation;
     $templatecontext['profileurl'] = $profileurl->out(false);
+    $status = '';
+    if (!$args['userexist'] && $args['course']) {
+        $status = get_string('createuserenrolcourse', 'auth_magic', $templatecontext['coursename']);
+    } else if ($args['userexist'] && $args['course']) {
+        $status = get_string('existuserenrolcourse', 'auth_magic', $templatecontext['coursename']);
+    } else if (!$args['userexist'] && !$args['course']) {
+        $status = get_string('statuscreateuser', 'auth_magic');
+    }
+    $templatecontext['status'] = $status;
     return $OUTPUT->render_from_template('auth_magic/modalbox', $templatecontext);
 }
 

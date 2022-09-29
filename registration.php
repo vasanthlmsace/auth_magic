@@ -34,6 +34,7 @@ $courseid = optional_param('courseid', 0, PARAM_INT);
 $userid = optional_param('userid', 0, PARAM_INT);
 $return = optional_param('return', 0, PARAM_INT);
 $coursebase = optional_param('coursebase', 0, PARAM_INT);
+$userexist = optional_param('userexist', false, PARAM_BOOL);
 require_login();
 $url = new moodle_url('/auth/magic/registration.php', array('courseid' => $courseid));
 $PAGE->set_url($url);
@@ -83,6 +84,7 @@ if ($return) {
     $params['course'] = $coursebase;
     $params['user'] = $userid;
     $params['returnurl'] = $PAGE->url->out();
+    $params['userexist'] = $userexist;
     $PAGE->requires->js_call_amd('auth_magic/authmagic', 'init', array($params));
 }
 $form = new quickregistration_form($PAGE->url->out(), ['courseid' => $courseid]);
@@ -92,53 +94,65 @@ if ($form->is_cancelled()) {
     $coursebase = isset($usernew->course) ? $usernew->course : false;
     $enrolmentduration = $usernew->enrolmentduration;
     $usercreated = false;
-    $usernew->timemodified = time();
-    if ($usernew->id == -1) {
-        $usernew->username = $usernew->email;
-        $usernew->mnethostid = $CFG->mnet_localhost_id; // Always local user.
-        $usernew->confirmed  = 1;
-        $usernew->timecreated = time();
-        $usernew->id = user_create_user($usernew, false, false);
+    $existuser = $DB->get_record('user', array('email' => $usernew->email));
+    if (!$existuser) {
+        $usernew->timemodified = time();
+        if ($usernew->id == -1) {
+            $usernew->username = $usernew->email;
+            $usernew->mnethostid = $CFG->mnet_localhost_id; // Always local user.
+            $usernew->confirmed  = 1;
+            $usernew->timecreated = time();
+            $usernew->id = user_create_user($usernew, false, false);
+            $usercreated = true;
+        }
+        $usercontext = context_user::instance($usernew->id);
+        // Update mail bounces.
+        useredit_update_bounces($user, $usernew);
+
+        // Update forum track preference.
+        useredit_update_trackforums($user, $usernew);
+
+        // Reload from db.
+        $usernew = $DB->get_record('user', array('id' => $usernew->id));
+
+        // Trigger update/create event, after all fields are stored.
+        if ($usercreated) {
+            \core\event\user_created::create_from_userid($usernew->id)->trigger();
+        } else {
+            \core\event\user_updated::create_from_userid($usernew->id)->trigger();
+        }
+        $usercontext = context_user::instance($usernew->id);
+
+        // If check the parent role assign or not.
+        if ($roleid = get_config('auth_magic', 'owneraccountrole')) {
+            role_assign($roleid, $USER->id, $usercontext->id);
+        }
+    } else {
+        $usernew = $existuser;
         $usercreated = true;
     }
-    $usercontext = context_user::instance($usernew->id);
-    // Update mail bounces.
-    useredit_update_bounces($user, $usernew);
-
-    // Update forum track preference.
-    useredit_update_trackforums($user, $usernew);
-
-    // Reload from db.
-    $usernew = $DB->get_record('user', array('id' => $usernew->id));
-    if ($coursebase) {
-        // Enroll to user in course.
-        $enrolstauts = auth_magic_enroll_course_user($coursebase, $usernew, $enrolmentduration);
+    $accessauthtoall = get_config('auth_magic', 'authmethod');
+    if ($accessauthtoall || $usernew->auth == 'magic') {
+        if ($coursebase) {
+            // Enroll to user in course.
+            $enrolstauts = auth_magic_enroll_course_user($coursebase, $usernew, $enrolmentduration);
+        }
+        $auth = get_auth_plugin('magic');
+        // Request login url.
+        $auth->create_magic_instance($usernew);
+        \core\session\manager::gc(); // Remove stale sessions.
+        $returnparams = array('userid' => $usernew->id,
+        'return' => $usercreated, 'courseid' => $courseid);
+        if ($coursebase) {
+            $returnparams['coursebase'] = $coursebase;
+        }
+        if ($existuser) {
+            $returnparams['userexist'] = true;
+        }
+        redirect(new moodle_url('/auth/magic/registration.php', $returnparams));
     }
-
-    // Trigger update/create event, after all fields are stored.
-    if ($usercreated) {
-        \core\event\user_created::create_from_userid($usernew->id)->trigger();
-    } else {
-        \core\event\user_updated::create_from_userid($usernew->id)->trigger();
-    }
-
-    $usercontext = context_user::instance($usernew->id);
-
-    // If check the parent role assign or not.
-    if ($roleid = get_config('auth_magic', 'owneraccountrole')) {
-        role_assign($roleid, $USER->id, $usercontext->id);
-    }
-    $auth = get_auth_plugin('magic');
-    // Request login url.
-    $auth->create_magic_instance($usernew);
-
-    \core\session\manager::gc(); // Remove stale sessions.
-    $returnparams = array('userid' => $usernew->id,
-    'return' => $usercreated, 'courseid' => $courseid);
-    if ($coursebase) {
-        $returnparams['coursebase'] = $coursebase;
-    }
-    redirect(new moodle_url('/auth/magic/registration.php', $returnparams));
+    redirect(new moodle_url('/auth/magic/registration.php'), get_string('quickregisterfornonauth', 'auth_magic'),
+        null, \core\output\notification::NOTIFY_INFO);
 }
 
 

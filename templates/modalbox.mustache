@@ -28,8 +28,7 @@
 
 }}
 <div class="auth-magic-block">
-    <p> <a href="{{profileurl}}">{{username}} </a> {{#str}}hasbeencreated, auth_magic{{/str}}
-        {{#coursename}} {{#str}} strenrolinto, auth_magic {{/str}}"{{coursename}}" {{/coursename}}</p>
+    <p> <a href="{{profileurl}}">{{username}} </a> {{#status}} {{status}} {{/status}}</p>
     <div class="magic-link-block">
         <span>{{#str}} magiclink, auth_magic{{/str}}</span>
         <input type="text" id="copy-text" value="{{magicinvitation}}" size="60">
