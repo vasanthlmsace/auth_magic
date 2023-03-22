@@ -28,5 +28,20 @@
  * @return bool
  */
 function xmldb_auth_magic_upgrade($oldversion) {
+    global $CFG, $DB;
+    $dbman = $DB->get_manager();
+    if ($oldversion < 2023032000) {
+        // Define table auth_magic_loginlinks to be created.
+        $table = new xmldb_table('auth_magic_loginlinks');
+        $field = new xmldb_field('manualexpiry', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'loginexpiry');
+
+        // Conditionally launch add field description_format.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Magic savepoint reached.
+        upgrade_plugin_savepoint(true, 2023032000, 'auth', 'magic');
+    }
     return true;
 }

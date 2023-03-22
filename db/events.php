@@ -21,24 +21,11 @@
  * @copyright  2022 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 defined('MOODLE_INTERNAL') || die();
 
 $observers = [
     [
-        'eventname'   => '\core\event\user_deleted',
-        'callback'    => '\auth_magic\event\user_deleted_observer::create_delete_data_request',
-    ],
-    [
-        'eventname'   => '\core\event\user_list_viewed',
-        'callback'    => '\auth_magic\event\user_list_viewed_observer::create_user_list_viewed_request',
-    ],
-    [
-        'eventname'   => '\core\event\user_created',
-        'callback'    => '\auth_magic\event\user_created_observer::created_user_data_request',
-    ],
-    [
-        'eventname'   => '\core\event\user_updated',
-        'callback'    => '\auth_magic\event\user_updated_observer::create_update_data_request',
+        'eventname' => '\core\event\user_created',
+        'callback' => '\auth_magic\event\user_created_observer::created_user_data_request',
     ]
 ];

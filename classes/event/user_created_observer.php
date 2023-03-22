@@ -21,8 +21,12 @@
  * @copyright  2022 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 namespace auth_magic\event;
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot. "/auth/magic/auth.php");
+require_once($CFG->dirroot. "/auth/magic/lib.php");
 
 /**
  * Event observers supported by this plugin.
@@ -39,14 +43,18 @@ class user_created_observer {
      * @param \core\event\user_created $event
      */
     public static function created_user_data_request(\core\event\user_created $event) {
+
         global $USER;
         $userid = $event->objectid;
         $usercontext = \context_user::instance($userid);
         $user = \core_user::get_user($userid);
         if ($user->auth == 'magic') {
-            // If check the parent role assign or not.
-            if ($roleid = get_config('auth_magic', 'owneraccountrole')) {
-                role_assign($roleid, $USER->id, $usercontext->id);
+            // Pro feature.
+            if (auth_magic_has_pro()) {
+                // If check the parent role assign or not.
+                if ($roleid = get_config('auth_magic', 'owneraccountrole')) {
+                    role_assign($roleid, $USER->id, $usercontext->id);
+                }
             }
             $auth = get_auth_plugin('magic');
             // Request login url.
@@ -55,4 +63,3 @@ class user_created_observer {
         return true;
     }
 }
-

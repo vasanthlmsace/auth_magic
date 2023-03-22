@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/authlib.php');
-
+require_once($CFG->dirroot."/auth/magic/lib.php");
 /**
  * Plugin for no authentication - disabled user.
  */
@@ -127,10 +127,10 @@ class auth_plugin_magic extends auth_plugin_base {
 
         $data = new stdClass();
         $data->firstname = $user->firstname;
-        $data->lastname  = $user->lastname;
-        $data->username  = $user->username;
-        $data->sitename  = format_string($site->fullname);
-        $data->admin     = generate_email_signoff();
+        $data->lastname = $user->lastname;
+        $data->username = $user->username;
+        $data->sitename = format_string($site->fullname);
+        $data->admin = generate_email_signoff();
 
         $message = get_string('emailpasswordchangeinfodisabled', '', $data);
         $subject = get_string('emailpasswordchangeinfosubject', '', format_string($site->fullname));
@@ -177,7 +177,10 @@ class auth_plugin_magic extends auth_plugin_base {
             'value' => $keyvalue
         );
         $message = '';
-        $accessauthtoall = get_config('auth_magic', 'authmethod');
+        $accessauthtoall = 0;
+        if (auth_magic_has_pro()) {
+            $accessauthtoall = get_config('auth_magic', 'authmethod');
+        }
         if (!$key = $DB->get_record('user_private_key', $options)) {
             $message = get_string('invalidkey', 'error');
         } else if (!$user = $DB->get_record('user', array('id' => $key->userid))) {
@@ -240,10 +243,18 @@ class auth_plugin_magic extends auth_plugin_base {
         global $CFG, $PAGE;
         $PAGE->add_body_class('auth-magic');
         $CFG->authloginviaemail = true;
-        $params = array('loginhook' => true,
-            'strbutton' => get_string('getmagiclinkviagmail', 'auth_magic'));
+        $linkbtnpos = '';
+        if (auth_magic_has_pro()) {
+            $linkbtnpos = get_config('auth_magic', 'loginlinkbtnpostion');
+        }
+        $params = array(
+            'loginhook' => true,
+            'strbutton' => get_string('getmagiclinkviagmail', 'auth_magic'),
+            'linkbtnpos' => $linkbtnpos
+        );
         $PAGE->requires->js_call_amd('auth_magic/authmagic', 'init', array($params));
     }
+
 
     /**
      * Create key for users.
@@ -256,17 +267,21 @@ class auth_plugin_magic extends auth_plugin_base {
         $config = $this->get_config_data();
         $loginexpiry = !empty($config->loginexpiry) ? time() + $config->loginexpiry : 0;
         $invitationexpiry = !empty($config->invitationexpiry) ? time() + $config->invitationexpiry : 0;
-        $loginuserkey  = $this->create_user_key($user->id, $loginexpiry);
-        $invitationuserkey  = $this->create_user_key($user->id, $invitationexpiry);
+        $loginuserkey = $this->create_user_key($user->id, $loginexpiry);
+        $invitationuserkey = $this->create_user_key($user->id, $invitationexpiry);
         $loginurl = $CFG->wwwroot . '/auth/magic/login.php?key=' . $loginuserkey;
         $invitationurl = $CFG->wwwroot . '/auth/magic/login.php?key=' . $invitationuserkey;
         $parent = 0;
-        if ($checkparent) {
-            $parentrole = get_config('auth_magic', 'owneraccountrole');
-            if ($parentrole) {
-                $parent = $USER->id;
+        $parentrole = null;
+        if (auth_magic_has_pro()) {
+            if ($checkparent) {
+                $parentrole = get_config('auth_magic', 'owneraccountrole');
+                if ($parentrole) {
+                    $parent = $USER->id;
+                }
             }
         }
+
         if (!$DB->record_exists('auth_magic_loginlinks', array('userid' => $user->id))) {
             // Insert record.
             $record = new stdClass;
@@ -316,7 +331,10 @@ class auth_plugin_magic extends auth_plugin_base {
             'script' => 'auth/magic',
             'value' => $key
         );
-        $accessauthtoall = get_config('auth_magic', 'authmethod');
+        $accessauthtoall = 0;
+        if (auth_magic_has_pro()) {
+            $accessauthtoall = get_config('auth_magic', 'authmethod');
+        }
         if ($instance = $DB->get_record('auth_magic_loginlinks', array('loginuserkey' => $key))) {
             // Key as login.
             if (!empty($instance->loginexpiry) && $instance->loginexpiry < time()) {

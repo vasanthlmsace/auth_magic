@@ -29,51 +29,10 @@
      */
     var AuthMagic = function(params) {
         var self = this;
-        if (params.enrolstatus !== undefined) {
-            self.displayAuthInfoBox(params);
-        }
-        if (params.cancopylink !== undefined) {
-            self.copyuserLoginlink(params.cancopylink);
-        }
         if (params.loginhook) {
             self.magicLoginHook(params);
         }
-        if (params.hascourseregister) {
-            self.courseQuickRegistration(params);
-        }
         return true;
-    };
-
-    AuthMagic.prototype.courseQuickRegistration = function(params) {
-        var uniqueid = "user-index-participants-" + params.courseid;
-        var handleSelector = ".pagelayout-incourse [data-table-uniqueid=" + uniqueid + "]";
-        var addHandler = document.querySelectorAll(handleSelector);
-        if (addHandler) {
-            var singleButton = document.createElement("div");
-            singleButton.setAttribute("class", "singlebutton quickregister-button");
-
-            // Create a form.
-            var form = document.createElement("form");
-            form.setAttribute("method", "get");
-            form.setAttribute("action", params.url);
-            form.setAttribute("id", "quickregister-button");
-
-            // Create an input element for Full Name
-            var courseblock = document.createElement("input");
-            courseblock.setAttribute("type", "hidden");
-            courseblock.setAttribute("name", "courseid");
-            courseblock.setAttribute("value", params.courseid);
-
-            var submit = document.createElement("input");
-            submit.setAttribute("type", "submit");
-            submit.setAttribute("value", params.strquickregister);
-            submit.setAttribute("class", "btn btn-secondary my-1");
-
-            form.appendChild(courseblock);
-            form.appendChild(submit);
-            singleButton.appendChild(form);
-            addHandler[0].appendChild(singleButton);
-        }
     };
 
     AuthMagic.prototype.magicLoginHook = function(params) {
@@ -99,33 +58,49 @@
             if (getMagicLink) {
                 getMagicLink.classList.remove("btn-secondary");
                 getMagicLink.classList.add("btn-primary");
-                var userNameBlock = document.querySelectorAll("#page-login-index form#login .form-group")[0];
-                if (userNameBlock) {
-                    userNameBlock.appendChild(getMagicLink);
-                    // Create a span.
-                    var span = document.createElement("span");
-                    span.setAttribute("class", "magic-password-instruction");
-                    var passInfo = String.get_string('passinfo', 'auth_magic');
-                    $.when(passInfo).done(function(localizedEditString) {
-                        span.innerHTML = localizedEditString;
-                    });
-                    userNameBlock.appendChild(span);
+
+                if (params.linkbtnpos == 0 ) {
+                    var getMagicLinkBlock = document.querySelectorAll("#page-login-index form#login .form-group")[params.linkbtnpos];
+                    if (getMagicLinkBlock) {
+                        getMagicLinkBlock.appendChild(getMagicLink);
+                        // Create a span.
+                        var span = document.createElement("span");
+                        span.setAttribute("class", "magic-password-instruction");
+                        var passInfo = String.get_string('passinfo', 'auth_magic');
+                        $.when(passInfo).done(function(localizedEditString) {
+                            span.innerHTML = localizedEditString;
+                        });
+                        getMagicLinkBlock.appendChild(span);
+                    }
                 }
-                if (potentialiDpList.length <= 1) {
-                    $(potentialiDp).hide();
-                        var identityProvider = document.querySelectorAll("#page-login-index .login-identityproviders")[0];
-                        if (identityProvider) {
-                            $(identityProvider).prev().hide();
-                            $(identityProvider).next().hide();
-                        }
+                if (params.linkbtnpos == 1) {
+                    var getMagicLinkBlock = document.querySelectorAll("#page-login-index form#login .form-group")[params.linkbtnpos];
+                    if (getMagicLinkBlock) {
+                        getMagicLinkBlock.appendChild(getMagicLink);
+                    }
+                }
+
+                if (params.linkbtnpos <= 1) {
+                    if (potentialiDpList.length <= 1) {
+                        $(potentialiDp).hide();
+                            var identityProvider = document.querySelectorAll("#page-login-index .login-identityproviders")[0];
+                            if (identityProvider) {
+                                $(identityProvider).prev().hide();
+                                $(identityProvider).next().hide();
+                            }
+                    }
+                }
+
+                if (params.linkbtnpos == 2) {
+                    getMagicLink.classList.remove("btn-primary");
                 }
                 getMagicLink.addEventListener("click", function(e) {
                     e.preventDefault();
                     var returnurl = e.currentTarget.getAttribute("href");
-                    var userEmail = "";
+                    var userValue = "";
                     var mailSelector = document.querySelectorAll("form#login #username")[0];
                     if (mailSelector) {
-                        userEmail = mailSelector.value;
+                        userValue = mailSelector.value;
                     }
                     // Create a form.
                     var form = document.createElement("form");
@@ -139,13 +114,13 @@
                     magicLogin.setAttribute("name", "magiclogin");
                     magicLogin.setAttribute("value", 1);
 
-                    var email = document.createElement("input");
-                    email.setAttribute("type", "hidden");
-                    email.setAttribute("name", "usermail");
-                    email.setAttribute("value", userEmail);
+                    var uservalue = document.createElement("input");
+                    uservalue.setAttribute("type", "hidden");
+                    uservalue.setAttribute("name", "uservalue");
+                    uservalue.setAttribute("value", userValue);
 
                     form.appendChild(magicLogin);
-                    form.appendChild(email);
+                    form.appendChild(uservalue);
 
                     getMagicLink.parentNode.appendChild(form);
 
@@ -154,89 +129,6 @@
                 });
             }
         }
-    };
-
-    AuthMagic.prototype.copyuserLoginlink = function(cancopylink) {
-        var self = this;
-        if (cancopylink) {
-            var invitationlink = document.querySelectorAll("table.magicinvitationlink .magic-invitationlink");
-            if (invitationlink) {
-                invitationlink.forEach(function(items) {
-                    items.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        var userlogin = e.currentTarget.getAttribute("data-invitationlink");
-                        self.copyText(userlogin);
-                    });
-                });
-            }
-        }
-    };
-
-    AuthMagic.prototype.copyTextCliboard = function() {
-        var self = this;
-        var copyTextBlock = document.querySelectorAll(".auth-magic-block #copy-text")[0];
-        if (copyTextBlock) {
-            self.copyText(copyTextBlock.value, true);
-            copyTextBlock.select();
-        }
-    };
-
-    AuthMagic.prototype.copyText = function(copytext, modal = false) {
-        if (typeof (navigator.clipboard) == 'undefined') {
-            var textArea = document.createElement("textarea");
-            textArea.value = copytext;
-            // Avoid scrolling to bottom
-            textArea.style.top = "0";
-            textArea.style.left = "0";
-            textArea.style.position = "fixed";
-            if (!modal) {
-                document.body.appendChild(textArea);
-            } else {
-                document.querySelectorAll(".modal .modal-content")[0].appendChild(textArea);
-            }
-            textArea.focus();
-            textArea.select();
-            try {
-                document.execCommand('copy');
-            } catch (err) {
-                return false;
-            }
-            if (!modal) {
-                document.body.removeChild(textArea);
-            } else {
-                document.querySelectorAll(".modal .modal-content")[0].removeChild(textArea);
-            }
-        } else {
-            navigator.clipboard.writeText(copytext);
-        }
-        return true;
-    };
-
-    AuthMagic.prototype.displayAuthInfoBox = function(params) {
-        var self = this;
-        ModalFactory.create({
-            title: params.strconfirm,
-            type: ModalFactory.types.CANCEL,
-            body: self.getAuthMagicBody(params),
-            large: true
-        }).then(function(modal) {
-            modal.show();
-            modal.getRoot().on(ModalEvents.bodyRendered, function() {
-                var copyBoardButton = document.querySelectorAll(".auth-magic-block .copy-link-block #copy-cliboard")[0];
-                if (copyBoardButton) {
-                    copyBoardButton.addEventListener("click", self.copyTextCliboard.bind(self));
-                }
-            });
-            modal.getRoot().on(ModalEvents.hidden, function() {
-                modal.destroy();
-                window.open(params.returnurl, '_self');
-            });
-            return modal;
-        }).catch(notification.exception);
-    };
-
-    AuthMagic.prototype.getAuthMagicBody = function(params) {
-        return Fragment.loadFragment('auth_magic', 'display_box_content', params.contextid, params);
     };
 
     return {

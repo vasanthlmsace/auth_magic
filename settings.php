@@ -23,25 +23,9 @@
  */
 
 defined('MOODLE_INTERNAL') || die;
+require_once($CFG->dirroot."/auth/magic/lib.php");
 
 if ($ADMIN->fulltree) {
-
-    // Enrolment duration.
-    $name = "auth_magic/enrolmentduration";
-    $title = get_string("defaultenrolmentduration", "auth_magic");
-    $desc = "";
-    $setting = new admin_setting_configduration($name, $title, $desc, 0);
-    $settings->add($setting);
-
-    // Enrollment role.
-    $options = get_default_enrol_roles(context_system::instance());
-    $student = get_archetype_roles('student');
-    $student = reset($student);
-    $name = "auth_magic/enrolmentrole";
-    $title = get_string("defaultenrolmentrole", "auth_magic");
-    $desc = "";
-    $setting = new admin_setting_configselect($name, $title, $desc, $student->id ?? null, $options);
-    $settings->add($setting);
 
      // Magic login link expiry.
      $name = "auth_magic/invitationexpiry";
@@ -57,43 +41,9 @@ if ($ADMIN->fulltree) {
     $setting = new admin_setting_configduration($name, $title, $desc, 4 * HOURSECS);
     $settings->add($setting);
 
-    // Supported authentication method.
-    $options = [
-        0 => get_string('magiconly', 'auth_magic'),
-        1 => get_string('anymethod', 'auth_magic'),
-    ];
-    $name = "auth_magic/authmethod";
-    $title = get_string("strsupportauth", "auth_magic");
-    $desc = "";
-    $setting = new admin_setting_configselect($name, $title, $desc, 0, $options);
-    $settings->add($setting);
-
-
-
-    // Owener account role.
-    $options = [];
-    $options[0] = get_string('none');
-    $usercontextroles = get_roles_for_contextlevels(CONTEXT_USER);
-    if ($usercontextroles) {
-        list($rolesql, $roleparams) = $DB->get_in_or_equal($usercontextroles);
-        $sql = "SELECT id, name FROM {role} WHERE id $rolesql";
-        $roles = $DB->get_records_sql($sql, $roleparams);
-        $options += array_column($roles, 'name', 'id');
+    // Pro plugin feature settings.
+    if (auth_magic_has_pro()
+        && file_exists($CFG->dirroot."/local/magic/setting.php")) {
+        require_once($CFG->dirroot."/local/magic/setting.php");
     }
-    $name = "auth_magic/owneraccountrole";
-    $title = get_string("strowneraccountrole", "auth_magic");
-    $desc = "";
-    $setting = new admin_setting_configselect($name, $title, $desc, 0, $options);
-    $settings->add($setting);
-
-}
-
-if (is_enabled_auth('magic')) {
-    $ADMIN->add('accounts', new admin_externalpage('auth_magic_quickregistration',
-        get_string('quickregistration', 'auth_magic'),
-        new moodle_url('/auth/magic/registration.php'), ['auth/magic:cansitequickregistration']));
-
-    $ADMIN->add('accounts', new admin_externalpage('auth_magic_loginlinks',
-        get_string('listofmagiclink', 'auth_magic'),
-        new moodle_url('/auth/magic/listusers.php')));
 }
