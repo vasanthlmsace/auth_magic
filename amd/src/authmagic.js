@@ -60,7 +60,7 @@
                 getMagicLink.classList.add("btn-primary");
 
                 if (params.linkbtnpos == 0 ) {
-                    var getMagicLinkBlock = document.querySelectorAll("#page-login-index form#login .form-group")[params.linkbtnpos];
+                   var getMagicLinkBlock = document.querySelectorAll("#page-login-index form#login .form-group")[params.linkbtnpos];
                     if (getMagicLinkBlock) {
                         getMagicLinkBlock.appendChild(getMagicLink);
                         // Create a span.
@@ -74,7 +74,7 @@
                     }
                 }
                 if (params.linkbtnpos == 1) {
-                    var getMagicLinkBlock = document.querySelectorAll("#page-login-index form#login .form-group")[params.linkbtnpos];
+                   var getMagicLinkBlock = document.querySelectorAll("#page-login-index form#login .form-group")[params.linkbtnpos];
                     if (getMagicLinkBlock) {
                         getMagicLinkBlock.appendChild(getMagicLink);
                     }
