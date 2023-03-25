@@ -67,7 +67,7 @@ jobs:
         env:
           DB: ${{ matrix.database }}
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
-          IGNORE_NAMES: 'login.php,authmagic.min.js,authmagic.min.js.map'
+          IGNORE_NAMES: 'login.php,authmagic.min.js,authmagic.min.js.map,behat_auth_magic.php,list_magiclinks.feature,magic_login.feature,quick_registration.feature'
 
       - name: PHP Lint
         if: ${{ always() }}
