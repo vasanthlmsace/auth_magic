@@ -37,7 +37,7 @@ use core_privacy\local\request\transform;
 use core_privacy\local\request\writer;
 
 /**
- * The ltool_note modules data export and deletion options.
+ * The Magic authentication data export and deletion options.
  */
 class provider implements
     \core_privacy\local\metadata\provider,
@@ -52,18 +52,19 @@ class provider implements
      */
     public static function get_metadata(collection $collection): collection {
         $magicmetadata = [
-            'userid' => 'privacy:metadata:magic:userid',
-            'parent' => 'privacy:metadata:magic:parent',
-            'magicauth' => 'privacy:metadata:magic:magicauth',
-            'parentrole' => 'privacy:metadata:magic:parentrole',
-            'loginuserkey' => 'privacy:metadata:magic:loginuserkey',
-            'invitationuserkey' => 'privacy:metadata:magic:invitationuserkey',
-            'magiclogin' => 'privacy:metadata:magic:magiclogin',
-            'magiclink' => 'privacy:metadata:magic:magiclink',
-            'loginexpiry' => 'privacy:metadata:magic:loginexpiry',
-            'invitationexpiry' => 'privacy:metadata:magic:invitationexpiry',
-            'timecreated' => 'privacy:metadata:magic:timecreated',
-            'timemodified' => 'privacy:metadata:magic:timemodified'
+            'userid' => 'privacy:metadata:auth_magic:userid',
+            'parent' => 'privacy:metadata:auth_magic:parent',
+            'magicauth' => 'privacy:metadata:auth_magic:magicauth',
+            'parentrole' => 'privacy:metadata:auth_magic:parentrole',
+            'loginuserkey' => 'privacy:metadata:auth_magic:loginuserkey',
+            'invitationuserkey' => 'privacy:metadata:auth_magic:invitationuserkey',
+            'magiclogin' => 'privacy:metadata:auth_magic:magiclogin',
+            'magicinvitation' => 'privacy:metadata:auth_magic:magicinvitation',
+            'loginexpiry' => 'privacy:metadata:auth_magic:loginexpiry',
+            'invitationexpiry' => 'privacy:metadata:auth_magic:invitationexpiry',
+            'manualexpiry' => 'privacy:metadata:auth_magic:manualexpiry',
+            'timecreated' => 'privacy:metadata:auth_magic:timecreated',
+            'timemodified' => 'privacy:metadata:auth_magic:timemodified'
         ];
         $collection->add_database_table('auth_magic_loginlinks', $magicmetadata, 'privacy:metadata:auth_magic_loginlinks');
 
@@ -193,10 +194,10 @@ class provider implements
         // Generate the loginlinks list to export.
         $exportdata = array_map(function($record) {
             return [
-                'userid' => $record->userid,
-                'parent' => $record->parent,
+                'userid' => transform::user($record->userid),
+                'parent' => $record->parent ? transform::user($record->parent) : get_string('none'),
                 'magicauth' => $record->magicauth,
-                'parentrole' => $record->parentrole,
+                'parentrole' => ($record->parentrole) ? $record->parentrole : get_string('none'),
                 'loginuserkey' => $record->loginuserkey,
                 'invitationuserkey' => $record->invitationuserkey,
                 'magiclogin' => $record->magiclogin,

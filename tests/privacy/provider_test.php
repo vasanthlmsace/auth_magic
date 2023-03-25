@@ -35,7 +35,7 @@ use core_privacy\local\request\approved_userlist;
  *
  * @package    auth_magic
  * @category   test
- * @copyright  2022 bdecent gmbh <https://bdecent.de>
+ * @copyright  2023 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider_test extends provider_testcase {
