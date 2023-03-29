@@ -18,7 +18,7 @@
  * Privacy implementation for Magic authentication.
  *
  * @package   auth_magic
- * @copyright bdecent GmbH 2021
+ * @copyright bdecent GmbH 2023
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
