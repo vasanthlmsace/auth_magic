@@ -51,11 +51,6 @@ function(String) {
         var MagicLink = "";
         if (authSelector) {
             MagicLink = document.querySelectorAll(authSelector)[0];
-            var potentialiDp = document.querySelector(linkId + " .potentialidplist");
-            if (potentialiDp) {
-                potentialiDp = potentialiDp.previousElementSibling;
-            }
-            var potentialiDpList = document.querySelectorAll(linkId + " .potentialidplist .potentialidp");
             if (MagicLink === undefined) {
                 authSelector = linkId + " .login-identityproviders a";
                 var MagicLinks = document.querySelectorAll(authSelector);
@@ -64,8 +59,6 @@ function(String) {
                         var inner = item.innerHTML.trim();
                         if (inner == params.strbutton) {
                             MagicLink = item;
-                            potentialiDpList = document.querySelectorAll(linkId + " .login-identityproviders a");
-                            potentialiDp = document.querySelectorAll(linkId + " .login-identityproviders h2")[0];
                         }
                     });
                 }
@@ -76,11 +69,20 @@ function(String) {
 
     AuthMagic.prototype.magicLoginHook = function(params) {
         var self = this;
-        var MagicLink = self.getMagicLink(params, "#page-login-index");
+        var linkId = "#page-login-index";
+        var MagicLink = self.getMagicLink(params, linkId);
         if (MagicLink) {
             if (!document.querySelector("#page-login-index .potentialidplist")) {
                 MagicLink.classList.remove("btn-secondary");
                 MagicLink.classList.add("btn-primary");
+                potentialiDpList = document.querySelectorAll(linkId + " .login-identityproviders a");
+                potentialiDp = document.querySelectorAll(linkId + " .login-identityproviders h2")[0];
+            } else {
+                var potentialiDp = document.querySelector(linkId + " .potentialidplist");
+                if (potentialiDp) {
+                    potentialiDp = potentialiDp.previousElementSibling;
+                }
+                var potentialiDpList = document.querySelectorAll(linkId + " .potentialidplist .potentialidp");
             }
             if (!params.linkbtnpos) {
                 params.linkbtnpos = 0;
@@ -159,7 +161,7 @@ function(String) {
             var magicForm = document.querySelectorAll("form#magic-login-form")[0];
             magicForm.submit();
         });
-    }
+    };
 
     return {
         init: function(params) {
