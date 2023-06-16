@@ -126,7 +126,7 @@ function(String, Ajax) {
         }
     };
 
-    AuthMagic.prototype.getMagicLinkPassCheck = function(params) {
+    AuthMagic.prototype.getMagicLinkPassCheck = function() {
         var emailElement = document.querySelector("form.login-form input[name=email]");
         var passwordElement = document.querySelector("form.login-form input[name=password]");
         var status = false;
@@ -135,7 +135,6 @@ function(String, Ajax) {
                 email : emailElement.value,
                 password : passwordElement.value,
             };
-            console.log(args);
             Ajax.call([{
                 methodname: 'auth_magic_get_magiclink_passcheck',
                 args: args,
@@ -157,7 +156,7 @@ function(String, Ajax) {
                 loginformbutton.click();
             }
 
-            if (!self.getMagicLinkPassCheck(params)) {
+            if (params.passcheck && !self.getMagicLinkPassCheck()) {
                 return "";
             }
             var returnurl = e.currentTarget.getAttribute("href");

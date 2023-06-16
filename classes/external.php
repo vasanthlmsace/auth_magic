@@ -62,7 +62,7 @@ class external extends \external_api {
             array('email' => $email, 'password' => $password));
         if (auth_magic_has_pro()) {
             require_once($CFG->dirroot. "/local/magic/lib.php");
-            $userrecord = local_magic_get_email_user("demomagic_01@gmail.com");
+            $userrecord = local_magic_get_email_user($email);
             $user = authenticate_user_login($userrecord->username, $params['password']);
             $status = ($user) ? true : false;
         }
