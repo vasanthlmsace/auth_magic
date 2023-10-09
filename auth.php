@@ -229,7 +229,7 @@ class auth_plugin_magic extends auth_plugin_base {
             $message = get_string('expiredkey', 'error');
         } else if ($key->iprestriction && get_config('auth_magic', 'iprestrication')) {
             $remoteaddr = getremoteaddr();
-            if (empty($remoteaddr) or !address_in_subnet($remoteaddr, $key->iprestriction)) {
+            if (empty($remoteaddr) || !address_in_subnet($remoteaddr, $key->iprestriction)) {
                 $message = get_string('ipmismatch', 'error');
             }
         }
@@ -376,7 +376,8 @@ class auth_plugin_magic extends auth_plugin_base {
                             $this->update_new_loginkey($relateduser, $instance);
                             auth_magic_sent_loginlink_touser($relateduser->id, false, true);
                         }
-                        // Give the response only for non-login user logged in user show the prompt to display the access different account.
+                        // Give the response only for non-login user logged in
+                        // User show the prompt to display the access different account.
                         if (!isloggedin()) {
                             redirect(new moodle_url('/login/index.php'), $messagestr,
                                 null, \core\output\notification::NOTIFY_INFO);
@@ -400,7 +401,8 @@ class auth_plugin_magic extends auth_plugin_base {
                             $messagestr = get_string('invitationexpiryloginlinkwithupdate', 'auth_magic');
                             auth_magic_sent_loginlink_touser($relateduser->id);
                         }
-                         // Give the response only for non-login user logged in user show the prompt to display the access different account.
+                         // Give the response only for non-login user logged in
+                         // user show the prompt to display the access different account.
                         if (!isloggedin()) {
                             redirect(new moodle_url('/login/index.php'), $messagestr,
                                 null, \core\output\notification::NOTIFY_INFO);

@@ -64,23 +64,13 @@ define([], function() {
             if (!document.querySelector("#page-login-index .potentialidplist")) {
                 MagicLink.classList.remove("btn-secondary");
                 MagicLink.classList.add("btn-primary");
-                potentialiDpList = document.querySelectorAll(linkId + " .login-identityproviders a");
-                potentialiDp = document.querySelectorAll(linkId + " .login-identityproviders h2")[0];
-            } else {
-                var potentialiDp = document.querySelector(linkId + " .potentialidplist");
-                if (potentialiDp) {
-                    potentialiDp = potentialiDp.previousElementSibling;
-                }
-                var potentialiDpList = document.querySelectorAll(linkId + " .potentialidplist .potentialidp");
             }
-
             MagicLink.classList.remove("btn-primary");
-            self.magicLoginHandler(MagicLink, "form#login #username", params);
+            self.magicLoginHandler(MagicLink, "form#login #username");
         }
     };
 
-    AuthMagic.prototype.magicLoginHandler = function(MagicLink, mailHandler, params) {
-        var self = this;
+    AuthMagic.prototype.magicLoginHandler = function(MagicLink, mailHandler) {
         MagicLink.addEventListener("click", function(e) {
             e.preventDefault();
 
