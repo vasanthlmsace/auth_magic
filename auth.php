@@ -186,60 +186,13 @@ class auth_plugin_magic extends auth_plugin_base {
      */
     public function create_user_key($userid, $validuntil) {
         $config = $this->get_config_data();
-        $iprestriction = null;
-        if (get_config('auth_magic', 'iprestrication')) {
-            $iprestriction = getremoteaddr();
-        }
         return create_user_key(
             'auth/magic',
             $userid,
             null,
-            $iprestriction,
+            null,
             $validuntil
         );
-    }
-
-    /**
-     * Validates key and returns key data object if valid.
-     *
-     * @param string $keyvalue User key value.
-     *
-     * @return object Key object including userid property.
-     *
-     * @throws \moodle_exception If provided key is not valid.
-     */
-    public function validate_key($keyvalue) {
-        global $DB;
-
-        $options = array(
-            'script' => 'auth/magic',
-            'value' => $keyvalue
-        );
-        $message = '';
-        $accessauthtoall = get_config('auth_magic', 'authmethod');
-        if (!$key = $DB->get_record('user_private_key', $options)) {
-            $message = get_string('invalidkey', 'error');
-        } else if (!$user = $DB->get_record('user', array('id' => $key->userid))) {
-            $message = get_string('invaliduserid', 'error');
-        } else if ($user->deleted || $user->suspended) {
-            $message = get_string('invailduser', 'auth_magic');
-        } else if ($user->auth != 'magic' && !$accessauthtoall) {
-            $message = get_string('invalidrequest', 'error');
-        } else if (!empty($key->validuntil) && $key->validuntil < time()) {
-            $message = get_string('expiredkey', 'error');
-        } else if ($key->iprestriction && get_config('auth_magic', 'iprestrication')) {
-            $remoteaddr = getremoteaddr();
-            if (empty($remoteaddr) || !address_in_subnet($remoteaddr, $key->iprestriction)) {
-                $message = get_string('ipmismatch', 'error');
-            }
-        }
-        if (!empty($message)) {
-            if ((defined('PHPUNIT_TEST') && PHPUNIT_TEST)) {
-                return false;
-            }
-            redirect(new \moodle_url('/login/index.php'), $message, null, \core\output\notification::NOTIFY_ERROR);
-        }
-        return $key;
     }
 
     /**
@@ -299,17 +252,17 @@ class auth_plugin_magic extends auth_plugin_base {
      */
     public function create_magic_instance($user, $checkparent = true) {
         global $CFG, $DB, $USER;
-        $config = $this->get_config_data();
-        $loginexpiry = !empty($config->loginexpiry) ? time() + $config->loginexpiry : 0;
-        $invitationexpiry = !empty($config->invitationexpiry) ? time() + $config->invitationexpiry : 0;
-        $loginuserkey = $this->create_user_key($user->id, $loginexpiry);
-        $invitationuserkey = $this->create_user_key($user->id, $invitationexpiry);
-        $loginurl = $CFG->wwwroot . '/auth/magic/login.php?key=' . $loginuserkey;
-        $invitationurl = $CFG->wwwroot . '/auth/magic/login.php?key=' . $invitationuserkey;
-        $parent = 0;
-        $parentrole = null;
 
         if (!$DB->record_exists('auth_magic_loginlinks', array('userid' => $user->id))) {
+            $config = $this->get_config_data();
+            $loginexpiry = !empty($config->loginexpiry) ? time() + $config->loginexpiry : 0;
+            $invitationexpiry = !empty($config->invitationexpiry) ? time() + $config->invitationexpiry : 0;
+            $loginuserkey = $this->create_user_key($user->id, $loginexpiry);
+            $invitationuserkey = $this->create_user_key($user->id, $invitationexpiry);
+            $loginurl = $CFG->wwwroot . '/auth/magic/login.php?key=' . $loginuserkey;
+            $invitationurl = $CFG->wwwroot . '/auth/magic/login.php?key=' . $invitationuserkey;
+            $parent = 0;
+            $parentrole = null;
             // Insert record.
             $record = new stdClass;
             $record->userid = $user->id;

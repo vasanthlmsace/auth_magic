@@ -60,13 +60,12 @@ $string['sentlinktousername'] = "If you supplied a correct username, an email co
 $string['strsupportpassword'] = "Supports password";
 $string['loginexpiry'] = "Magic login link expiry";
 $string['invitationexpiry'] = "Magic invitation link expiry";
-$string['iprestrication'] = "Login key Iprestrication";
 $string['loginkeytype'] = "Configure login key link";
 $string['loginkeytype_desc'] = "This setting allows administrators to configure the behavior of login keys. The login keys can be used only once or until the expiry time.";
 $string['keyuseonce'] = "Only once";
 $string['keyusemultiple'] = "Until it expires";
 $string['loginoption'] = "Allow Username to get magic link";
-$string['loginoptiondesc'] = "Enable this setting to log in using the username provided in the login form.";
+$string['loginoptiondesc'] = "Enable this setting to login using the username provided in the login form.";
 $string['magiconly'] = "Magic only";
 $string['anymethod'] = "Any method";
 

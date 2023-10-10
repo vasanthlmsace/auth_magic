@@ -47,13 +47,6 @@ if ($ADMIN->fulltree) {
     $setting = new admin_setting_configduration($name, $title, $desc, 1 * HOURSECS);
     $settings->add($setting);
 
-    // Magic invitation link expiry.
-    $name = "auth_magic/iprestrication";
-    $title = get_string("iprestrication", "auth_magic");
-    $desc = "";
-    $setting = new admin_setting_configcheckbox($name, $title, $desc, 0);
-    $settings->add($setting);
-
 
     // Magic invitation link expiry.
     $name = "auth_magic/loginkeytype";
@@ -65,14 +58,6 @@ if ($ADMIN->fulltree) {
     ];
     $setting = new admin_setting_configselect($name, $title, $desc, 'once', $options);
     $settings->add($setting);
-
-    // Magic invitation link expiry.
-    $name = "auth_magic/iprestrication";
-    $title = get_string("iprestrication", "auth_magic");
-    $desc = "";
-    $setting = new admin_setting_configcheckbox($name, $title, $desc, 0);
-    $settings->add($setting);
-
 
     // Allow user to use username to login option.
     $name = "auth_magic/loginoption";
