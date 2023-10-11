@@ -61,11 +61,6 @@ define([], function() {
         var linkId = "#page-login-index";
         var MagicLink = self.getMagicLink(params, linkId);
         if (MagicLink) {
-            if (!document.querySelector("#page-login-index .potentialidplist")) {
-                MagicLink.classList.remove("btn-secondary");
-                MagicLink.classList.add("btn-primary");
-            }
-            MagicLink.classList.remove("btn-primary");
             self.magicLoginHandler(MagicLink, "form#login #username");
         }
     };
