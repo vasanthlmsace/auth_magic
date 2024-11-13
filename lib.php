@@ -48,8 +48,8 @@ function auth_magic_get_user_login_link($userid) {
  */
 function auth_magic_messagetouser($userto, $subject, $messageplain, $messagehtml, $courseid = null) {
     $eventdata = new \core\message\message();
-    $eventdata->name = 'instantmessage';
-    $eventdata->component = 'moodle';
+    $eventname = (PHPUNIT_TEST) ? 'instantmessage' : 'notification';
+    $eventcomponent = (PHPUNIT_TEST) ? 'moodle' : 'auth_magic';
     $eventdata->courseid = empty($courseid) ? SITEID : $courseid;
     $eventdata->userfrom = core_user::get_support_user();
     $eventdata->userto = $userto;
