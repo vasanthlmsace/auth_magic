@@ -97,7 +97,7 @@ function auth_magic_sent_loginlink_touser($userid, $otherauth = false, $expired 
         $messageplain = get_string('expiredloginlinkmsg', 'auth_magic', $data);
     } else {
         // Check link is expiry and more type.
-        $instance = $DB->get_record('auth_magic_loginlinks', array('userid' => $user->id));
+        $instance = $DB->get_record('auth_magic_loginlinks', ['userid' => $user->id]));
         if ($instance->loginexpiry < time()) {
             $auth->update_new_loginkey($user, $instance);
             auth_magic_sent_loginlink_touser($user->id, $otherauth);
