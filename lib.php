@@ -50,6 +50,8 @@ function auth_magic_messagetouser($userto, $subject, $messageplain, $messagehtml
     $eventdata = new \core\message\message();
     $eventname = (PHPUNIT_TEST) ? 'instantmessage' : 'notification';
     $eventcomponent = (PHPUNIT_TEST) ? 'moodle' : 'auth_magic';
+    $eventdata->name = $eventname;
+    $eventdata->component = $eventcomponent;
     $eventdata->courseid = empty($courseid) ? SITEID : $courseid;
     $eventdata->userfrom = core_user::get_support_user();
     $eventdata->userto = $userto;
